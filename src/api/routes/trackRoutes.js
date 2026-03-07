@@ -1,5 +1,5 @@
 import express from "express";
-import { trackEvent } from "api/controllers/trackController.js";
+import { trackEvent } from "../controllers/trackController.js";
 
 const router = express.Router();
 

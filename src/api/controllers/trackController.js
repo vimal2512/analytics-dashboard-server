@@ -1,4 +1,4 @@
-import Event from "domain/models/Event.js";
+import Event from "../../domain/models/Event.js";
 
 export const trackEvent = async (req, res) => {
   try {
