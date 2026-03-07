@@ -7,6 +7,7 @@ import collectRoutes from "./api/routes/collectRoutes.js"
 import analyticsRoutes from "./api/routes/analyticsRoutes.js"
 
 import { errorHandler } from "./middleware/errorHandler.js";
+import trackRoutes from "./api/routes/trackRoutes.js";
 
 const app = express();
 
@@ -26,6 +27,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/api/track", trackRoutes);
 
 app.get("/", (req,res) => {
     res.json({message: "Analytics backend running"})
