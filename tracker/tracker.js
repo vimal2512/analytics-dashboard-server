@@ -4,7 +4,7 @@
 
   let trackingId = null;
 
-  const API_URL = "http://localhost:5000/api/collect";
+  const API_URL = "https://analytics-dashboard-server.onrender.com/api/collect";
 
   function generateVisitorId() {
     return "v_" + Math.random().toString(36).substring(2, 12);
