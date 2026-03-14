@@ -18,7 +18,6 @@
 
 // startServer();
 
-
 import http from "http";
 import { Server } from "socket.io";
 
@@ -32,35 +31,29 @@ async function startServer() {
 
     await connectDB();
 
-    /*
-    Create HTTP server
-    */
-
     const server = http.createServer(app);
 
     /*
-    Attach Socket.IO
+    Allowed socket origins
     */
+
+    const allowedOrigins = [
+      "https://task-tracker-olive-eta.vercel.app",
+      "https://analytics-dashboard-client-q0ifa7ij8.vercel.app"
+    ];
 
     const io = new Server(server, {
       cors: {
-        origin: "https://task-tracker-olive-eta.vercel.app*"
+        origin: allowedOrigins,
+        methods: ["GET", "POST"]
       }
     });
-
-    /*
-    Make io accessible globally
-    */
 
     global.io = io;
 
     io.on("connection", (socket) => {
       console.log("Dashboard connected:", socket.id);
     });
-
-    /*
-    Start server
-    */
 
     server.listen(env.port, () => {
       console.log(`Server running on port ${env.port}`);
@@ -69,7 +62,6 @@ async function startServer() {
   } catch (error) {
 
     console.error("Server failed to start", error);
-
     process.exit(1);
 
   }
