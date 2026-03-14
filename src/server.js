@@ -33,18 +33,22 @@ async function startServer() {
 
     const server = http.createServer(app);
 
-    /*
-    Allowed socket origins
-    */
-
-    const allowedOrigins = [
-      "https://task-tracker-olive-eta.vercel.app",
-      "https://analytics-dashboard-client-q0ifa7ij8.vercel.app"
-    ];
-
     const io = new Server(server, {
       cors: {
-        origin: allowedOrigins,
+        origin: (origin, callback) => {
+
+          if (!origin) return callback(null, true);
+
+          if (
+            origin.endsWith(".vercel.app") ||
+            origin === "https://task-tracker-olive-eta.vercel.app"
+          ) {
+            return callback(null, true);
+          }
+
+          callback(new Error("CORS blocked"));
+
+        },
         methods: ["GET", "POST"]
       }
     });

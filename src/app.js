@@ -15,12 +15,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /*
-Allowed frontend origins
+Allowed origins
 */
 
 const allowedOrigins = [
   "https://task-tracker-olive-eta.vercel.app",
-  "https://analytics-dashboard-client-q0ifa7ij8.vercel.app"
+  "https://analytics-dashboard-client-two.vercel.app"
 ];
 
 app.use(
@@ -29,21 +29,21 @@ app.use(
 
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
         return callback(null, true);
       }
 
       return callback(new Error("CORS not allowed"));
+
     },
     credentials: true
   })
 );
 
 app.use(express.json());
-
-/*
-Routes
-*/
 
 app.use("/api/track", trackRoutes);
 
@@ -52,7 +52,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/tracker.js", (req, res) => {
-  res.sendFile(path.join(__dirname, "../tracker/tracker.js"));
+  res.sendFile(
+    path.join(__dirname, "../tracker/tracker.js")
+  );
 });
 
 app.use("/api", collectRoutes);
