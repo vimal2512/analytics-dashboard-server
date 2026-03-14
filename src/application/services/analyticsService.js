@@ -1,31 +1,81 @@
-import * as eventRepository from "../../infrastructure/repositories/eventRepository.js"
+import {
+  getUniqueVisitors,
+  getPageViews,
+  getTotalEvents,
+  getTraffic,
+  getTopPages,
+  getTopEvents,
+  getTopReferrers,
+  getTopCountries,
+} from "../../infrastructure/repositories/eventRepository.js";
 
-export async function collectEvent(data) {
-    const { trackingId, visitorId, event } = data;
+import * as eventRepository from "../../infrastructure/repositories/eventRepository.js";
 
-    if(!trackingId || !visitorId || !event) {
-        throw new Error("Invalid event payload")
-    }
+/*
+SUMMARY
+*/
 
-    return eventRepository.createEvent(data);
+export async function fetchSummary(trackingId) {
+
+  const visitors = await getUniqueVisitors(trackingId);
+
+  const pageViews = await getPageViews(trackingId);
+
+  const events = await getTotalEvents(trackingId);
+
+  return {
+    visitors: visitors.length,
+    pageViews,
+    events
+  };
+
+}
+
+/*
+TRAFFIC
+*/
+
+export async function fetchTraffic(trackingId) {
+
+  return getTraffic(trackingId);
+
+}
+
+/*
+TOP PAGES
+*/
+
+export async function fetchTopPages(trackingId) {
+
+  return getTopPages(trackingId);
+
+}
+
+export async function fetchTopEvents(trackingId) {
+
+  return getTopEvents(trackingId);
+
+}
+
+// TOP REFERRERS
+
+export async function fetchTopReferrers(trackingId) {
+
+  return getTopReferrers(trackingId);
+
+}
+
+// Top Countries
+
+export async function fetchTopCountries(trackingId) {
+
+  return getTopCountries(trackingId);
+
 }
 
 
-export async function getSummary(trackingId) {
-    const visitors = await eventRepository.getUniqueVisitors(trackingId);
+export async function collectEvent(payload) {
 
-    const pageViews = await eventRepository.countEvents({
-        trackingId,
-        event: "page_view"
-    });
+  return eventRepository.createEvent(payload);
 
-    const events = await eventRepository.countEvents({
-        trackingId
-    });
-
-    return {
-        visitors: visitors.length,
-        pageViews,
-        events
-    };
 }

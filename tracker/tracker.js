@@ -29,6 +29,7 @@
       visitorId: getVisitorId(),
       event: eventName,
       url: window.location.pathname,
+      referrer: document.referrer,
       timestamp: Date.now(),
       ...data
     };
@@ -48,6 +49,10 @@
 
     sendEvent("page_view");
 
+  };
+
+  analytics.track = function (eventName, data = {}) {
+  sendEvent(eventName, data);
   };
 
   window.analytics = analytics;

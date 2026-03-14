@@ -1,4 +1,11 @@
-import Event from "../../domain/models/Event.js";
+import {
+  fetchSummary,
+  fetchTraffic,
+  fetchTopPages,
+  fetchTopEvents,
+  fetchTopReferrers,
+  fetchTopCountries
+} from "../../application/services/analyticsService.js";
 
 /*
 GET /api/analytics/summary
@@ -16,24 +23,9 @@ export async function getSummary(req, res, next) {
       });
     }
 
-    const visitors = await Event.distinct("visitorId", {
-      trackingId
-    });
+    const summary = await fetchSummary(trackingId);
 
-    const pageViews = await Event.countDocuments({
-      trackingId,
-      event: "page_view"
-    });
-
-    const events = await Event.countDocuments({
-      trackingId
-    });
-
-    res.json({
-      visitors: visitors.length,
-      pageViews,
-      events
-    });
+    res.json(summary);
 
   } catch (error) {
 
@@ -59,37 +51,7 @@ export async function getTraffic(req, res, next) {
       });
     }
 
-    const traffic = await Event.aggregate([
-      {
-        $match: {
-          trackingId,
-          event: "page_view"
-        }
-      },
-      {
-        $group: {
-          _id: {
-            $dateToString: {
-              format: "%Y-%m-%d",
-              date: { $toDate: "$timestamp" }
-            }
-          },
-          visitors: {
-            $addToSet: "$visitorId"
-          }
-        }
-      },
-      {
-        $project: {
-          day: "$_id",
-          visitors: { $size: "$visitors" },
-          _id: 0
-        }
-      },
-      {
-        $sort: { day: 1 }
-      }
-    ]);
+    const traffic = await fetchTraffic(trackingId);
 
     res.json(traffic);
 
@@ -117,35 +79,91 @@ export async function getTopPages(req, res, next) {
       });
     }
 
-    const pages = await Event.aggregate([
-      {
-        $match: {
-          trackingId,
-          event: "page_view"
-        }
-      },
-      {
-        $group: {
-          _id: "$url",
-          views: { $sum: 1 }
-        }
-      },
-      {
-        $project: {
-          path: "$_id",
-          views: 1,
-          _id: 0
-        }
-      },
-      {
-        $sort: { views: -1 }
-      },
-      {
-        $limit: 10
-      }
-    ]);
+    const pages = await fetchTopPages(trackingId);
 
     res.json(pages);
+
+  } catch (error) {
+
+    next(error);
+
+  }
+
+}
+
+export async function getTopEvents(req, res, next) {
+
+  try {
+
+    const { trackingId } = req.query;
+
+    if (!trackingId) {
+      return res.status(400).json({
+        message: "trackingId is required"
+      });
+    }
+
+    const events = await fetchTopEvents(trackingId);
+
+    res.json(events);
+
+  } catch (error) {
+
+    next(error);
+
+  }
+
+}
+
+
+/*
+GET /api/analytics/top-referrers
+*/
+
+export async function getTopReferrers(req, res, next) {
+
+  try {
+
+    const { trackingId } = req.query;
+
+    if (!trackingId) {
+      return res.status(400).json({
+        message: "trackingId is required"
+      });
+    }
+
+    const referrers = await fetchTopReferrers(trackingId);
+
+    res.json(referrers);
+
+  } catch (error) {
+
+    next(error);
+
+  }
+
+}
+
+
+/*
+GET /api/analytics/top-countries
+*/
+
+export async function getTopCountries(req, res, next) {
+
+  try {
+
+    const { trackingId } = req.query;
+
+    if (!trackingId) {
+      return res.status(400).json({
+        message: "trackingId is required"
+      });
+    }
+
+    const countries = await fetchTopCountries(trackingId);
+
+    res.json(countries);
 
   } catch (error) {
 

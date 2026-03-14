@@ -37,6 +37,11 @@ const eventSchema = new mongoose.Schema(
             type: Number,
             required: true,
             index: true
+        },
+
+        country: {
+            type: String,
+            index: true
         }
     },
 
