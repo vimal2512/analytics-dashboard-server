@@ -233,3 +233,12 @@ export async function createEvent(payload) {
   return event.save();
 
 }
+
+export async function getUniqueSessions(trackingId) {
+
+  return Event.distinct("sessionId", {
+    trackingId,
+    sessionId: { $exists: true }
+  });
+
+}

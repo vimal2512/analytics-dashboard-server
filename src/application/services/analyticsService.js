@@ -19,9 +19,7 @@ export async function fetchSummary(trackingId) {
 
   const visitors = await getUniqueVisitors(trackingId);
 
-  const sessions = await Event.distinct("sessionId", {
-    trackingId
-  });
+  const sessions = await eventRepository.getUniqueSessions(trackingId);
 
   const pageViews = await getPageViews(trackingId);
 
