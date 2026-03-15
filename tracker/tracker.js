@@ -62,6 +62,7 @@
       sessionId: getSessionId(),
       event: eventName,
       url: window.location.pathname,
+      referrer: document.referrer || "direct",
       timestamp: Date.now(),
       ...data
     };
