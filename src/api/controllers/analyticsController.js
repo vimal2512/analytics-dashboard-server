@@ -15,7 +15,7 @@ export async function getSummary(req, res, next) {
 
   try {
 
-    const { trackingId } = req.query;
+    const { trackingId , days} = req.query;
 
     if (!trackingId) {
       return res.status(400).json({
@@ -23,7 +23,7 @@ export async function getSummary(req, res, next) {
       });
     }
 
-    const summary = await fetchSummary(trackingId);
+    const summary = await fetchSummary(trackingId, days);
 
     res.json(summary);
 

@@ -15,15 +15,21 @@ import * as eventRepository from "../../infrastructure/repositories/eventReposit
 SUMMARY
 */
 
-export async function fetchSummary(trackingId) {
+export async function fetchSummary(trackingId, days) {
 
-  const visitors = await getUniqueVisitors(trackingId);
+  let startTimestamp = null;
 
-  const sessions = await eventRepository.getUniqueSessions(trackingId);
+  if(days) {
+    startTimestamp = Date.now() - (Number(days) * 24 * 60 * 60 * 1000);
+  }
 
-  const pageViews = await getPageViews(trackingId);
+  const visitors = await getUniqueVisitors(trackingId, startTimestamp);
 
-  const events = await getTotalEvents(trackingId);
+  const sessions = await eventRepository.getUniqueSessions(trackingId, startTimestamp);
+
+  const pageViews = await getPageViews(trackingId, startTimestamp);
+
+  const events = await getTotalEvents(trackingId, startTimestamp);
 
   return {
     visitors: visitors.length,
