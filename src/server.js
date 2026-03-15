@@ -18,6 +18,7 @@
 
 // startServer();
 
+
 import http from "http";
 import { Server } from "socket.io";
 
@@ -55,8 +56,52 @@ async function startServer() {
 
     global.io = io;
 
+    /*
+    Store active users per trackingId
+    */
+
+    const activeUsers = {};
+
     io.on("connection", (socket) => {
-      console.log("Dashboard connected:", socket.id);
+
+      console.log("Socket connected:", socket.id);
+
+      /*
+      User comes online from tracker
+      */
+
+      socket.on("user-online", ({ trackingId, sessionId }) => {
+
+        if (!trackingId || !sessionId) return;
+
+        if (!activeUsers[trackingId]) {
+          activeUsers[trackingId] = new Set();
+        }
+
+        activeUsers[trackingId].add(sessionId);
+
+        io.emit("liveVisitors", activeUsers[trackingId].size);
+
+      });
+
+      /*
+      Handle disconnect
+      */
+
+      socket.on("disconnect", () => {
+
+        for (const trackingId in activeUsers) {
+
+          activeUsers[trackingId].delete(socket.id);
+
+          io.emit("liveVisitors", activeUsers[trackingId].size);
+
+        }
+
+        console.log("Socket disconnected:", socket.id);
+
+      });
+
     });
 
     server.listen(env.port, () => {

@@ -82,6 +82,13 @@
 
     queueEvent("page_view");
 
+    if(window.socket) {
+      window.socket.emit("user-online", {
+        trackingId,
+        visitorId: getVisitorId(),
+        sessionId: getSessionId()
+      })
+    }
   };
 
   window.analytics = analytics;
