@@ -6,7 +6,19 @@
 
   const API_URL = "https://analytics-dashboard-server.onrender.com/api/collect-batch";
 
+  const SOCKET_URL = "https://analytics-dashboard-server.onrender.com";
+
   const eventQueue = [];
+
+  /*
+  Create socket connection
+  */
+
+  const socket = window.io ? io(SOCKET_URL) : null;
+
+  if (socket) {
+    console.log("Analytics socket connected");
+  }
 
   function generateVisitorId() {
     return "v_" + Math.random().toString(36).substring(2, 12);
@@ -82,19 +94,29 @@
 
     queueEvent("page_view");
 
-    if(window.socket) {
-      window.socket.emit("user-online", {
+    /*
+    Notify backend user is online
+    */
+
+    if (socket) {
+
+      socket.emit("user-online", {
         trackingId,
         visitorId: getVisitorId(),
         sessionId: getSessionId(),
         url: window.location.pathname
-      })
+      });
+
     }
+
   };
 
   window.analytics = analytics;
 
-  // send events every 5 seconds
+  /*
+  Send batched events every 5 seconds
+  */
+
   setInterval(flushEvents, 5000);
 
 })();
