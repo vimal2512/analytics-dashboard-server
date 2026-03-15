@@ -4,7 +4,8 @@ import {
   fetchTopPages,
   fetchTopEvents,
   fetchTopReferrers,
-  fetchTopCountries
+  fetchTopCountries,
+  fetchSessionAnalytics
 } from "../../application/services/analyticsService.js";
 
 /*
