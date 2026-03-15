@@ -172,3 +172,31 @@ export async function getTopCountries(req, res, next) {
   }
 
 }
+
+/*
+GET /api/analytics/session-analytics
+*/
+
+export async function getSessionAnalytics(req, res, next) {
+
+  try {
+
+    const { trackingId, days } = req.query;
+
+    if (!trackingId) {
+      return res.status(400).json({
+        message: "trackingId is required"
+      });
+    }
+
+    const data = await fetchSessionAnalytics(trackingId, days);
+
+    res.json(data);
+
+  } catch (error) {
+
+    next(error);
+
+  }
+
+}

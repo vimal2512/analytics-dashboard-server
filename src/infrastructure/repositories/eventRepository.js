@@ -529,3 +529,69 @@ export async function getTopCountries(trackingId, startTimestamp) {
   ]);
 
 }
+
+
+// get session analytics
+
+export async function getSessionAnalytics(trackingId, startTimestamp) {
+
+  const match = {
+    trackingId
+  };
+
+  if (startTimestamp) {
+    match.timestamp = { $gte: startTimestamp };
+  }
+
+  const sessions = await Event.aggregate([
+    {
+      $match: match
+    },
+    {
+      $group: {
+        _id: "$sessionId",
+        start: { $min: "$timestamp" },
+        end: { $max: "$timestamp" },
+        pages: {
+          $sum: {
+            $cond: [{ $eq: ["$event", "page_view"] }, 1, 0]
+          }
+        }
+      }
+    }
+  ]);
+
+  if (!sessions.length) {
+    return {
+      avgSessionDuration: 0,
+      bounceRate: 0,
+      pagesPerSession: 0
+    };
+  }
+
+  const totalSessions = sessions.length;
+
+  let totalDuration = 0;
+  let totalPages = 0;
+  let bounceSessions = 0;
+
+  sessions.forEach((s) => {
+
+    const duration = s.end - s.start;
+
+    totalDuration += duration;
+    totalPages += s.pages;
+
+    if (s.pages === 1) {
+      bounceSessions++;
+    }
+
+  });
+
+  return {
+    avgSessionDuration: Math.round(totalDuration / totalSessions),
+    bounceRate: Math.round((bounceSessions / totalSessions) * 100),
+    pagesPerSession: Number((totalPages / totalSessions).toFixed(2))
+  };
+
+}

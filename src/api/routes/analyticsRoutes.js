@@ -6,7 +6,8 @@ import {
   getTopPages,
   getTopEvents,
   getTopReferrers,
-  getTopCountries
+  getTopCountries,
+  getSessionAnalytics
 } from "../controllers/analyticsController.js";
 
 const router = express.Router();
@@ -26,5 +27,7 @@ router.get("/top-events", getTopEvents);
 router.get("/top-referrers", getTopReferrers);
 
 router.get("/top-countries", getTopCountries);
+
+router.get("/session-analytics", getSessionAnalytics);
 
 export default router;

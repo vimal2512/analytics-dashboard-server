@@ -7,6 +7,7 @@ import {
   getTopEvents,
   getTopReferrers,
   getTopCountries,
+  getSessionAnalytics
 } from "../../infrastructure/repositories/eventRepository.js";
 
 import * as eventRepository from "../../infrastructure/repositories/eventRepository.js";
@@ -86,5 +87,19 @@ export async function fetchTopCountries(trackingId) {
 export async function collectEvent(payload) {
 
   return eventRepository.createEvent(payload);
+
+}
+
+// session analytics
+
+export async function fetchSessionAnalytics(trackingId, days) {
+
+  let startTimestamp = null;
+
+  if (days) {
+    startTimestamp = Date.now() - (Number(days) * 24 * 60 * 60 * 1000);
+  }
+
+  return getSessionAnalytics(trackingId, startTimestamp);
 
 }
