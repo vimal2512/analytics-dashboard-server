@@ -61,6 +61,7 @@ async function startServer() {
     */
 
     const activeUsers = {};
+    const activePages = {};
 
     io.on("connection", (socket) => {
 
@@ -70,20 +71,40 @@ async function startServer() {
       User comes online from tracker
       */
 
-      socket.on("user-online", ({ trackingId, sessionId }) => {
+     socket.on("user-online", ({ trackingId, sessionId, url }) => {
 
-        if (!trackingId || !sessionId) return;
+     if (!trackingId || !sessionId) return;
 
-        if (!activeUsers[trackingId]) {
-          activeUsers[trackingId] = new Set();
-        }
+     if (!activeUsers[trackingId]) {
+       activeUsers[trackingId] = new Set();
+     }
 
-        activeUsers[trackingId].add(sessionId);
+    if (!activePages[trackingId]) {
+      activePages[trackingId] = {};
+    }
 
-        io.emit("liveVisitors", activeUsers[trackingId].size);
+    activeUsers[trackingId].add(sessionId);
 
-      });
+    if (!activePages[trackingId][url]) {
+      activePages[trackingId][url] = new Set();
+    }
 
+    activePages[trackingId][url].add(sessionId);
+
+    io.emit("liveVisitors", activeUsers[trackingId].size);
+
+  /*
+  Emit page presence
+  */
+
+  const pages = Object.entries(activePages[trackingId]).map(([page, sessions]) => ({
+    page,
+    users: sessions.size
+  }));
+
+  io.emit("livePages", pages);
+
+});
       /*
       Handle disconnect
       */

@@ -86,7 +86,8 @@
       window.socket.emit("user-online", {
         trackingId,
         visitorId: getVisitorId(),
-        sessionId: getSessionId()
+        sessionId: getSessionId(),
+        url: window.location.pathname
       })
     }
   };
