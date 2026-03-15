@@ -95,3 +95,31 @@ export async function collectEvent(req, res, next) {
   }
 
 }
+
+// collect batch events
+
+export async function collectBatchEvents(req, res, next) {
+
+  try {
+
+    const { events } = req.body;
+
+    if (!events || !Array.isArray(events)) {
+      return res.status(400).json({
+        message: "events array required"
+      });
+    }
+
+    await Promise.all(
+      events.map((event) => analyticsService.collectEvent(event))
+    );
+
+    res.status(201).json({ success: true });
+
+  } catch (error) {
+
+    next(error);
+
+  }
+
+}

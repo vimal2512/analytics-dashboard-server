@@ -4,7 +4,9 @@
 
   let trackingId = null;
 
-  const API_URL = "https://analytics-dashboard-server.onrender.com/api/collect";
+  const API_URL = "https://analytics-dashboard-server.onrender.com/api/collect-batch";
+
+  const eventQueue = [];
 
   function generateVisitorId() {
     return "v_" + Math.random().toString(36).substring(2, 12);
@@ -24,22 +26,23 @@
     }
 
     return visitorId;
+
   }
 
   function getSessionId() {
 
-  let sessionId = sessionStorage.getItem("analytics_session");
+    let sessionId = sessionStorage.getItem("analytics_session");
 
-  if (!sessionId) {
-    sessionId = generateSessionId();
-    sessionStorage.setItem("analytics_session", sessionId);
+    if (!sessionId) {
+      sessionId = generateSessionId();
+      sessionStorage.setItem("analytics_session", sessionId);
+    }
+
+    return sessionId;
+
   }
 
-  return sessionId;
-
-}
-
-  function sendEvent(eventName, data = {}) {
+  function queueEvent(eventName, data = {}) {
 
     const payload = {
       trackingId,
@@ -47,32 +50,43 @@
       sessionId: getSessionId(),
       event: eventName,
       url: window.location.pathname,
-      referrer: document.referrer,
       timestamp: Date.now(),
       ...data
     };
+
+    eventQueue.push(payload);
+
+  }
+
+  function flushEvents() {
+
+    if (eventQueue.length === 0) return;
+
+    const events = [...eventQueue];
+
+    eventQueue.length = 0;
 
     fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({ events })
     }).catch(() => {});
+
   }
 
   analytics.init = function (id) {
 
     trackingId = id;
 
-    sendEvent("page_view");
+    queueEvent("page_view");
 
-  };
-
-  analytics.track = function (eventName, data = {}) {
-  sendEvent(eventName, data);
   };
 
   window.analytics = analytics;
+
+  // send events every 5 seconds
+  setInterval(flushEvents, 5000);
 
 })();
