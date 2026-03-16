@@ -7,10 +7,12 @@ import {
   getTopEvents,
   getTopReferrers,
   getTopCountries,
-  getSessionAnalytics
+  getSessionAnalytics,
+  
 } from "../../infrastructure/repositories/eventRepository.js";
 
 import * as eventRepository from "../../infrastructure/repositories/eventRepository.js";
+
 
 /*
 SUMMARY
@@ -102,4 +104,12 @@ export async function fetchSessionAnalytics(trackingId, days) {
 
   return getSessionAnalytics(trackingId, startTimestamp);
 
+}
+
+export async function fetchWebsite(id) {
+  return websiteRepository.getWebsiteById(id);
+}
+
+export async function updateWebsite(id, data) {
+  return websiteRepository.updateWebsite(id, data);
 }

@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import collectRoutes from "./api/routes/collectRoutes.js";
 import analyticsRoutes from "./api/routes/analyticsRoutes.js";
 import trackRoutes from "./api/routes/trackRoutes.js";
-
+import websiteRoutes from "./api/routes/websiteRoutes"
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -58,6 +58,7 @@ app.get("/tracker.js", (req, res) => {
 });
 
 app.use("/api", collectRoutes);
+app.use("/api", websiteRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
 app.use(errorHandler);
