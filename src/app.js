@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import collectRoutes from "./api/routes/collectRoutes.js";
 import analyticsRoutes from "./api/routes/analyticsRoutes.js";
 import trackRoutes from "./api/routes/trackRoutes.js";
-import websiteRoutes from "./api/routes/websiteRoutes"
+import websiteRoutes from "./api/routes/websiteRoutes.js"
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
