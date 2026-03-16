@@ -1,6 +1,7 @@
 import express from "express";
+
 import {
-  createWebsite,
+  createWebsiteController,
   getWebsites,
   deleteWebsite,
   getWebsite,
@@ -11,7 +12,7 @@ const router = express.Router();
 
 router.get("/websites", getWebsites);
 
-router.post("/websites", createWebsite);
+router.post("/websites", createWebsiteController);
 
 router.delete("/websites/:id", deleteWebsite);
 
