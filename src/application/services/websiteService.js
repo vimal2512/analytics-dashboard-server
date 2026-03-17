@@ -12,9 +12,9 @@ export async function createWebsite(data) {
 /*
 GET ALL WEBSITES
 */
-export async function fetchWebsites() {
+export async function fetchWebsites(userId) {
 
-  return websiteRepository.getWebsites();
+  return websiteRepository.getWebsites(userId);
 
 }
 

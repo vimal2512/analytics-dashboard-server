@@ -7,6 +7,11 @@ import {
 } from "../../application/services/websiteService.js";
 
 /*
+TEMP USER (until auth is built)
+*/
+const USER_ID = "user_1";
+
+/*
 CREATE WEBSITE
 */
 export async function createWebsiteController(req, res, next) {
@@ -20,7 +25,10 @@ export async function createWebsiteController(req, res, next) {
       });
     }
 
-    const website = await createWebsite({ domain });
+    const website = await createWebsite({
+      domain,
+      userId: USER_ID
+    });
 
     res.status(201).json(website);
 
@@ -30,12 +38,12 @@ export async function createWebsiteController(req, res, next) {
 }
 
 /*
-GET ALL WEBSITES
+GET ALL WEBSITES (FILTERED)
 */
 export async function getWebsites(req, res, next) {
   try {
 
-    const websites = await fetchWebsites();
+    const websites = await fetchWebsites(USER_ID);
 
     res.json(websites);
 

@@ -7,6 +7,12 @@ const websiteSchema = new mongoose.Schema({
     required: true
   },
 
+  userId: {
+    type: String,
+    required: true,
+    index: true,
+  },
+
   trackingId: {
     type: String,
     required: true,

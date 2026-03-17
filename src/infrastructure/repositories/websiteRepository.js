@@ -18,9 +18,9 @@ export async function createWebsite(data) {
 /*
 GET ALL WEBSITES
 */
-export async function getWebsites() {
+export async function getWebsites(userId) {
 
-  return Website.find();
+  return Website.find(userId);
 
 }
 
