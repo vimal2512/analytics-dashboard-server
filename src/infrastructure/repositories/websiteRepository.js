@@ -18,10 +18,14 @@ export async function createWebsite(data) {
 /*
 GET ALL WEBSITES
 */
+
 export async function getWebsites(userId) {
 
-  return Website.find(userId);
+  if (userId) {
+    return Website.find({ userId }).sort({ createdAt: -1 });
+  }
 
+  return Website.find().sort({ createdAt: -1 });
 }
 
 /*

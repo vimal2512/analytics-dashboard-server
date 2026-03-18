@@ -40,10 +40,13 @@ export async function createWebsiteController(req, res, next) {
 /*
 GET ALL WEBSITES (FILTERED)
 */
+
 export async function getWebsites(req, res, next) {
   try {
 
-    const websites = await fetchWebsites(USER_ID);
+    const { userId } = req.query;
+
+    const websites = await fetchWebsites(userId);
 
     res.json(websites);
 
@@ -51,6 +54,7 @@ export async function getWebsites(req, res, next) {
     next(error);
   }
 }
+
 
 /*
 DELETE WEBSITE
