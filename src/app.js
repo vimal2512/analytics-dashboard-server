@@ -3,6 +3,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import authRoutes from "./api/routes/authRoutes.js"
 import collectRoutes from "./api/routes/collectRoutes.js";
 import analyticsRoutes from "./api/routes/analyticsRoutes.js";
 import trackRoutes from "./api/routes/trackRoutes.js";
@@ -59,6 +60,7 @@ app.get("/tracker.js", (req, res) => {
 
 app.use("/api", collectRoutes);
 app.use("/api", websiteRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
 app.use(errorHandler);

@@ -6,10 +6,7 @@ import {
   removeWebsite
 } from "../../application/services/websiteService.js";
 
-/*
-TEMP USER (until auth is built)
-*/
-const USER_ID = "user_1";
+
 
 /*
 CREATE WEBSITE
@@ -19,6 +16,8 @@ export async function createWebsiteController(req, res, next) {
 
     const { domain } = req.body;
 
+    const userId = req.user.userId;
+
     if (!domain) {
       return res.status(400).json({
         message: "domain is required"
@@ -27,7 +26,7 @@ export async function createWebsiteController(req, res, next) {
 
     const website = await createWebsite({
       domain,
-      userId: USER_ID
+      userId: userId
     });
 
     res.status(201).json(website);
@@ -44,7 +43,7 @@ GET ALL WEBSITES (FILTERED)
 export async function getWebsites(req, res, next) {
   try {
 
-    const { userId } = req.query;
+    const userId = req.user.userId;
 
     const websites = await fetchWebsites(userId);
 

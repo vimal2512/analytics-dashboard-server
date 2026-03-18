@@ -7,17 +7,18 @@ import {
   getWebsite,
   updateWebsiteController
 } from "../controllers/websiteController.js";
+import { protect } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/websites", getWebsites);
+router.get("/websites", protect, getWebsites);
 
-router.post("/websites", createWebsiteController);
+router.post("/websites", protect, createWebsiteController);
 
-router.delete("/websites/:id", deleteWebsite);
+router.delete("/websites/:id", protect, deleteWebsite);
 
-router.get("/websites/:id", getWebsite);
+router.get("/websites/:id", protect, getWebsite);
 
-router.put("/websites/:id", updateWebsiteController);
+router.put("/websites/:id", protect, updateWebsiteController);
 
 export default router;
