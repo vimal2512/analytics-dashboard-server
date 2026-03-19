@@ -37,6 +37,10 @@ export async function getWebsiteById(id) {
 
 }
 
+export async function getWebsiteByTrackingId(trackingId) {
+  return Website.findOne({ trackingId });
+}
+
 /*
 UPDATE WEBSITE
 */

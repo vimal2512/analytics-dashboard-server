@@ -1,13 +1,16 @@
 import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
+
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import authRoutes from "./api/routes/authRoutes.js"
+import authRoutes from "./api/routes/authRoutes.js";
 import collectRoutes from "./api/routes/collectRoutes.js";
 import analyticsRoutes from "./api/routes/analyticsRoutes.js";
 import trackRoutes from "./api/routes/trackRoutes.js";
-import websiteRoutes from "./api/routes/websiteRoutes.js"
+import websiteRoutes from "./api/routes/websiteRoutes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -16,12 +19,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /*
-Allowed origins
+CORS — tighten this (no wildcard logic)
 */
 
 const allowedOrigins = [
-  "https://task-tracker-olive-eta.vercel.app",
-  "https://analytics-dashboard-client-two.vercel.app"
+  process.env.CLIENT_URL,
+  "http://localhost:5173"
 ];
 
 app.use(
@@ -30,21 +33,23 @@ app.use(
 
       if (!origin) return callback(null, true);
 
-      if (
-        allowedOrigins.includes(origin) ||
-        origin.endsWith(".vercel.app")
-      ) {
+      if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      return callback(new Error("CORS not allowed"));
-
+      return callback(new Error("CORS not allowed: " + origin));
     },
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
 app.use(express.json());
+
+/*
+Routes
+*/
 
 app.use("/api/track", trackRoutes);
 
@@ -62,6 +67,10 @@ app.use("/api", collectRoutes);
 app.use("/api", websiteRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/analytics", analyticsRoutes);
+
+/*
+Error handler
+*/
 
 app.use(errorHandler);
 

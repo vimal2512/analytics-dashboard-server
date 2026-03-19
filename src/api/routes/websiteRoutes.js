@@ -5,7 +5,8 @@ import {
   getWebsites,
   deleteWebsite,
   getWebsite,
-  updateWebsiteController
+  updateWebsiteController,
+  getWebsiteByTrackingId
 } from "../controllers/websiteController.js";
 import { protect } from "../../middleware/authMiddleware.js";
 
@@ -20,5 +21,7 @@ router.delete("/websites/:id", protect, deleteWebsite);
 router.get("/websites/:id", protect, getWebsite);
 
 router.put("/websites/:id", protect, updateWebsiteController);
+
+router.get("/websites/tracking/:trackingId", protect, getWebsiteByTrackingId);
 
 export default router;

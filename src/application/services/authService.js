@@ -2,7 +2,12 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import * as userRepository from "../../infrastructure/repositories/userRepository.js";
 
-const JWT_SECRET = "supersecret";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// 🔥 FAIL FAST (critical)
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is not defined in environment variables");
+}
 
 /*
 REGISTER
@@ -23,7 +28,10 @@ export async function registerUser({ name, email, password }) {
     password: hashedPassword
   });
 
-  return user;
+  // ❌ never send password
+  const { password: _, ...safeUser } = user.toObject();
+
+  return safeUser;
 }
 
 /*
@@ -49,5 +57,8 @@ export async function loginUser({ email, password }) {
     { expiresIn: "7d" }
   );
 
-  return { token, user };
+  // ❌ remove password
+  const { password: _, ...safeUser } = user.toObject();
+
+  return { token, user: safeUser };
 }

@@ -18,6 +18,10 @@ export async function fetchWebsites(userId) {
 
 }
 
+export async function fetchWebsiteByTrackingId(trackingId) {
+  return websiteRepository.getWebsiteByTrackingId(trackingId);
+}
+
 /*
 GET SINGLE WEBSITE
 */

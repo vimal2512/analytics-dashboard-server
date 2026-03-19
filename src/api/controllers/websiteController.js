@@ -107,3 +107,19 @@ export async function updateWebsiteController(req, res, next) {
     next(error);
   }
 }
+
+
+
+export async function getWebsiteByTrackingId(req, res, next) {
+  try {
+
+    const { trackingId } = req.params;
+
+    const website = await fetchWebsiteByTrackingId(trackingId);
+
+    res.json(website);
+
+  } catch (error) {
+    next(error);
+  }
+}
