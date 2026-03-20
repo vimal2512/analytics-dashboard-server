@@ -37,7 +37,8 @@ async function startServer() {
       cors: {
         origin: [
           "http://localhost:5173",
-          "https://task-tracker-olive-eta.vercel.app"
+          "https://task-tracker-olive-eta.vercel.app",
+          "https://analytics-dashboard-client-quncomy29.vercel.app"
         ],
         methods: ["GET", "POST"],
         credentials: true
