@@ -24,7 +24,8 @@ CORS — tighten this (no wildcard logic)
 
 const allowedOrigins = [
   process.env.CLIENT_URL,
-  "http://localhost:5173"
+  "http://localhost:5173",
+  "https://analytics-dashboard-client-quncomy29.vercel.app"
 ];
 
 app.use(
