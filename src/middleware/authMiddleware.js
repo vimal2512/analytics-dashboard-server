@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = "supersecret";
 
+console.log("VERIFY SECRET:", process.env.JWT_SECRET);
+
 export function protect(req, res, next) {
 
   try {
