@@ -4,7 +4,6 @@ import * as userRepository from "../../infrastructure/repositories/userRepositor
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// 🔥 FAIL FAST (critical)
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined in environment variables");
 }
@@ -17,7 +16,9 @@ export async function registerUser({ name, email, password }) {
   const existing = await userRepository.getUserByEmail(email);
 
   if (existing) {
-    throw new Error("User already exists");
+    const err = new Error("User already exists");
+    err.statusCode = 400;
+    throw err;
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,8 +29,11 @@ export async function registerUser({ name, email, password }) {
     password: hashedPassword
   });
 
-  // ❌ never send password
-  const { password: _, ...safeUser } = user.toObject();
+  const safeUser = user.toObject
+    ? user.toObject()
+    : user;
+
+  delete safeUser.password;
 
   return safeUser;
 }
@@ -42,13 +46,17 @@ export async function loginUser({ email, password }) {
   const user = await userRepository.getUserByEmail(email);
 
   if (!user) {
-    throw new Error("Invalid credentials");
+    const err = new Error("Invalid credentials");
+    err.statusCode = 400;
+    throw err;
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
-    throw new Error("Invalid credentials");
+    const err = new Error("Invalid credentials");
+    err.statusCode = 400;
+    throw err;
   }
 
   const token = jwt.sign(
@@ -57,8 +65,11 @@ export async function loginUser({ email, password }) {
     { expiresIn: "7d" }
   );
 
-  // ❌ remove password
-  const { password: _, ...safeUser } = user.toObject();
+  const safeUser = user.toObject
+    ? user.toObject()
+    : user;
+
+  delete safeUser.password;
 
   return { token, user: safeUser };
 }
