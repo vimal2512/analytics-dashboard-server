@@ -14,6 +14,7 @@ export async function register(req, res, next) {
     res.status(201).json(user);
 
   } catch (error) {
+    console.log("Register Error:", error);
     next(error);
   }
 }
