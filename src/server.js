@@ -98,13 +98,15 @@ async function startServer() {
         activeUsers[trackingId]?.delete(sessionId);
 
         if (activePages[trackingId]?.[url]) {
+
+          
           activePages[trackingId][url].delete(sessionId);
         }
 
         // 🔥 CLEANUP MEMORY
         if (activeUsers[trackingId]?.size === 0) {
 
-          
+
           delete activeUsers[trackingId];
         }
 
