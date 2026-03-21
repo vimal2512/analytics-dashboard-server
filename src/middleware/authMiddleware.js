@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = "supersecret";
-
-console.log("VERIFY SECRET:", process.env.JWT_SECRET);
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export function protect(req, res, next) {
 
@@ -20,11 +18,13 @@ export function protect(req, res, next) {
 
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    req.user = decoded; // { userId }
+    req.user = decoded;
 
     next();
 
   } catch (error) {
+
+    console.error("JWT ERROR:", error.message); // keep this
 
     return res.status(401).json({
       message: "Invalid token"
