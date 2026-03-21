@@ -22,6 +22,6 @@ router.get("/websites/:id", protect, getWebsite);
 
 router.put("/websites/:id", protect, updateWebsiteController);
 
-router.get("/websites/tracking/:trackingId", protect, getWebsiteByTrackingId);
+router.get("/websites/tracking/:trackingId", getWebsiteByTrackingId);
 
 export default router;
