@@ -103,6 +103,8 @@ async function startServer() {
 
         // 🔥 CLEANUP MEMORY
         if (activeUsers[trackingId]?.size === 0) {
+
+          
           delete activeUsers[trackingId];
         }
 
