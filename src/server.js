@@ -25,6 +25,7 @@ import { Server } from "socket.io";
 import app from "./app.js";
 import { connectDB } from "./config/database.js";
 import { env } from "./config/env.js";
+import { isAllowedOrigin } from "./utils/cors.js";
 
 async function startServer() {
   try {
@@ -32,34 +33,30 @@ async function startServer() {
 
     const server = http.createServer(app);
 
-    // ✅ FIXED SOCKET CORS (includes localhost)
     const io = new Server(server, {
       cors: {
-        origin: [
-          "http://localhost:5173",
-          "https://task-tracker-olive-eta.vercel.app",
-          "https://analytics-dashboard-client-quncomy29.vercel.app"
-        ],
-        methods: ["GET", "POST"],
+        origin: (origin, callback) => {
+          if (isAllowedOrigin(origin)) {
+            return callback(null, true);
+          }
+          callback(new Error("Socket CORS blocked"));
+        },
         credentials: true
       }
     });
 
     global.io = io;
 
-    // ✅ ACTIVE STATE
     const activeUsers = {};
     const activePages = {};
 
     io.on("connection", (socket) => {
       console.log("Socket connected:", socket.id);
 
-      // ✅ USER ONLINE
       socket.on("user-online", ({ trackingId, sessionId, url }) => {
 
         if (!trackingId || !sessionId) return;
 
-        // 🔥 store on socket for cleanup
         socket.trackingId = trackingId;
         socket.sessionId = sessionId;
         socket.url = url;
@@ -80,10 +77,8 @@ async function startServer() {
 
         activePages[trackingId][url].add(sessionId);
 
-        // 🔥 emit visitors
         io.emit("liveVisitors", activeUsers[trackingId].size);
 
-        // 🔥 emit pages
         const pages = Object.entries(activePages[trackingId]).map(
           ([page, sessions]) => ({
             page,
@@ -94,7 +89,6 @@ async function startServer() {
         io.emit("livePages", pages);
       });
 
-      // ✅ FIXED DISCONNECT
       socket.on("disconnect", () => {
 
         const { trackingId, sessionId, url } = socket;
@@ -105,6 +99,23 @@ async function startServer() {
 
         if (activePages[trackingId]?.[url]) {
           activePages[trackingId][url].delete(sessionId);
+        }
+
+        // 🔥 CLEANUP MEMORY
+        if (activeUsers[trackingId]?.size === 0) {
+          delete activeUsers[trackingId];
+        }
+
+        if (activePages[trackingId]) {
+          for (const page in activePages[trackingId]) {
+            if (activePages[trackingId][page].size === 0) {
+              delete activePages[trackingId][page];
+            }
+          }
+
+          if (Object.keys(activePages[trackingId]).length === 0) {
+            delete activePages[trackingId];
+          }
         }
 
         io.emit("liveVisitors", activeUsers[trackingId]?.size || 0);
